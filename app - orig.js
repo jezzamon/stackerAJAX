@@ -6,81 +6,7 @@ $(document).ready( function() {
 		var tags = $(this).find("input[name='tags']").val();
 		getUnanswered(tags);
 	});
-
-	$('.inspiration-getter').submit(function(event){
-		$('.results').html('');
-		var tags = $(this).find("input[name='answerers']").val();
-		getInspiration(tags);
-	});
-
-
 });
-
-
-
-var showAnswerer = function(answerer){
-	var result = $('.templates .inspiration').clone();
-
-	var userElem = result.find('.user a');
-	userElem.attr('href', answerer.user.link);
-	userElem.text(answerer.user.display_name);
-
-	var postElem = result.find('.post-count');
-	postElem.text(answerer.post_count);
-
-	var scoreElem = result.find('.user-score');
-	scoreElem.text(answerer.score);
-
-	return result;
-};
-
-
-
-//THIS GETS INSPIRATION
-var getInspiration = function(tags){
-
-	// the parameters we need to pass in our request to StackOverflow's API
-	var request = {
-		tagged: tags,
-		site: 'stackoverflow',
-		order: 'desc',
-		sort: 'creation'
-	};
-	
-	var result = $.ajax({
-		url: "http://api.stackexchange.com/2.2/tags/" + tags + "/top-answerers/all_time",
-		data: request,
-		dataType: "jsonp",
-		type: "GET",
-		})
-	
-	.done(function(result){
-		var searchResults = showSearchResults(request.tagged, result.items.length);
-		$('.search-results').html(searchResults);
-
-		$.each(result.items, function(i, item) {
-			var topAnswerer = showAnswerer(item);
-			$('.results').append(topAnswerer);
-		});
-	})
-
-	.fail(function(jqXHR, error, errorThrown){
-		var errorElem = showError(error);
-		$('.search-results').append(errorElem);
-	});
-
-};
-
-
-
-
-
-
-
-
-
-
-//THIS GETS THE UNANSWERED QUESTIONS
 
 // this function takes the question object returned by StackOverflow 
 // and creates new result to be appended to DOM
@@ -116,8 +42,6 @@ var showQuestion = function(question) {
 };
 
 
-
-
 // this function takes the results object from StackOverflow
 // and creates info about search results to be appended to DOM
 var showSearchResults = function(query, resultNum) {
@@ -137,12 +61,10 @@ var showError = function(error){
 var getUnanswered = function(tags) {
 	
 	// the parameters we need to pass in our request to StackOverflow's API
-	var request = {
-		tagged: tags,
-		site: 'stackoverflow',
-		order: 'desc',
-		sort: 'creation'
-	};
+	var request = {tagged: tags,
+								site: 'stackoverflow',
+								order: 'desc',
+								sort: 'creation'};
 	
 	var result = $.ajax({
 		url: "http://api.stackexchange.com/2.2/questions/unanswered",
@@ -150,9 +72,9 @@ var getUnanswered = function(tags) {
 		dataType: "jsonp",
 		type: "GET",
 		})
-	
 	.done(function(result){
 		var searchResults = showSearchResults(request.tagged, result.items.length);
+
 		$('.search-results').html(searchResults);
 
 		$.each(result.items, function(i, item) {
@@ -160,7 +82,6 @@ var getUnanswered = function(tags) {
 			$('.results').append(question);
 		});
 	})
-
 	.fail(function(jqXHR, error, errorThrown){
 		var errorElem = showError(error);
 		$('.search-results').append(errorElem);
